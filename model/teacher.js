@@ -42,5 +42,21 @@ teacherSchema.methods.comparePassword = async function (password) {
     return isMatch;
 }
 
+teacherSchema.methods.createJWT = async function () {
+    const jwt = require('jsonwebtoken');
+    const JWT_SECRET = process.env.JWT_SECRET; 
+    
+    return jwt.sign(
+    {
+        id:this._id,
+        email:this.email
+    },
+    JWT_SECRET,
+    {
+        expiresIn:'30d'
+    }
+) 
+}
+
 const teacher = new mongoose.model('teacher', teacherSchema);
 module.exports = teacher;

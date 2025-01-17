@@ -55,13 +55,18 @@ const teacherSignIn = async (req, res) => {
         })
     }
 
+    const accessToken = await Teacher.createJWT();
     res.status(StatusCodes.OK).json({
         status:StatusCodes.OK,
         message:"Teacher logged in",
-        data:{
-            email,
-            password
-        } 
+        data:
+        {
+            user:{
+                email,
+                password,
+            },
+            accessToken
+        }
     });
     } catch (error) {
         res.status(StatusCodes.BAD_REQUEST).json({

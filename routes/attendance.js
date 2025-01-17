@@ -1,9 +1,11 @@
 const express = require('express');
+const router = express.Router();
+
 const { addStudent, displayStudents, displayStudent, updateStudent, deleteStudent } = require('../controller/student');
 const { addClass, displayClasses, displayClass, updateClass, deleteClass } = require('../controller/student_class');
 const { teacherSignUp, displayTeachers, displayTeacher, updateTeacher, deleteTeacher, teacherSignIn } = require('../controller/teacher');
 const { addAttendance, attendanceWeeklyReport, displayAttendanceHistory, deleteAttendance, updateAttendance, displayAttendanceById} = require('../controller/attendance');
-const router = express.Router();
+
 
 //POST REQUEST
 router.post('/student/add', addStudent);
