@@ -1,13 +1,14 @@
 const express = require('express');
 const { addStudent, displayStudents, displayStudent, updateStudent, deleteStudent } = require('../controller/student');
 const { addClass, displayClasses, displayClass, updateClass, deleteClass } = require('../controller/student_class');
-const { addTeacher, displayTeachers, displayTeacher, updateTeacher, deleteTeacher } = require('../controller/teacher');
-const { addAttendance, attendanceWeeklyReport, displayAttendanceHistory, deleteAttendance, updateAttendance} = require('../controller/attendance');
+const { teacherSignUp, displayTeachers, displayTeacher, updateTeacher, deleteTeacher, teacherSignIn } = require('../controller/teacher');
+const { addAttendance, attendanceWeeklyReport, displayAttendanceHistory, deleteAttendance, updateAttendance, displayAttendanceById} = require('../controller/attendance');
 const router = express.Router();
 
 //POST REQUEST
 router.post('/student/add', addStudent);
-router.post('/teacher/add', addTeacher);
+router.post('/teacher/signUp', teacherSignUp);
+router.post('/teacher/signIn', teacherSignIn);
 router.post('/class/add', addClass);
 router.post('/attendance/add', addAttendance);
 
@@ -21,6 +22,7 @@ router.get('/teacher/:id', displayTeacher);
 router.get('/class/', displayClasses);
 router.get('/class/:id', displayClass);
 
+router.get('/attendance/:id', displayAttendanceById)
 router.get('/attendance/weekly', attendanceWeeklyReport);
 router.get('/attendance/history', displayAttendanceHistory),
 

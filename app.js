@@ -4,6 +4,7 @@ const attendanceRoutes = require('./routes/attendance');
 const app = express();
 require('dotenv').config();
 
+
 app.use(express.json());
 app.use("/api/v1/", attendanceRoutes);
 

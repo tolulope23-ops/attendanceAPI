@@ -1,20 +1,72 @@
 const { StatusCodes } = require('http-status-codes');
 const Teacher = require('../model/teacher');
 
-const addTeacher = async(req, res) => {
+const teacherSignUp = async(req, res) => {
+    const {fullname, email, password, confirmPassword, phone} = req.body
    try {
+        const emailAlreadyExist = await Teacher.findOne({email});
+        if(emailAlreadyExist){
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status:StatusCodes.BAD_REQUEST,
+                message:`Teacher already exist, please login: ${error.message}`,
+                data:{} 
+            })
+        }
+        if(password !== confirmPassword){
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status:StatusCodes.BAD_REQUEST,
+                message:`Incorrect password, please confirmPassword again: ${error.message}`,
+                data:{} 
+            })
+        }
         const teacher = new Teacher(req.body);
         await teacher.save();
         res.status(StatusCodes.CREATED).json({
             status:StatusCodes.CREATED,
             message:"Teacher's infomation created.",
             data:teacher 
-        })
+        });
    } catch (error) {
-    console.log(error);
-     res.status(StatusCodes.BAD_REQUEST).json({
+        res.status(StatusCodes.BAD_REQUEST).json({
             status:StatusCodes.BAD_REQUEST,
             message:`Error creating teacher's infomation: ${error.message}`,
+            data:{} 
+        })
+   }
+}
+
+const teacherSignIn = async (req, res) => {
+    const {email, password} = req.body;
+    try {
+        const emailAlreadyExist = Teacher.findOne({email});
+        if(!emailAlreadyExist){
+            return res.status(StatusCodes.BAD_REQUEST).json({
+            status:StatusCodes.BAD_REQUEST,
+            message:`You don't have an account, please signUp: ${error.message}`,
+            data:{} 
+        })
+    }
+    const ispasswordCorrect = await Teacher.comparePassword(password);
+    if(!ispasswordCorrect){
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status:StatusCodes.BAD_REQUEST,
+            message:`Incorrect password, try again: ${error.message}`,
+            data:{} 
+        })
+    }
+
+    res.status(StatusCodes.OK).json({
+        status:StatusCodes.OK,
+        message:"Teacher logged in",
+        data:{
+            email,
+            password
+        } 
+    });
+    } catch (error) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            status:StatusCodes.BAD_REQUEST,
+            message:`Error logging in: ${error.message}`,
             data:{} 
         })
    }
@@ -120,4 +172,4 @@ const deleteTeacher = async (req, res) =>{
     }
 }
 
-module.exports = {addTeacher, displayTeachers, displayTeacher, updateTeacher, deleteTeacher};
+module.exports = {teacherSignUp, teacherSignIn, displayTeachers, displayTeacher, updateTeacher, deleteTeacher};

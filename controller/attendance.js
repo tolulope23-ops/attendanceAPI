@@ -151,4 +151,4 @@ const deleteAttendance = async (req, res) =>{
 }
 
 
-module.exports = {addAttendance, displayAttendanceHistory, attendanceWeeklyReport, updateAttendance, deleteAttendance};
+module.exports = {addAttendance, displayAttendanceById,displayAttendanceHistory, attendanceWeeklyReport, updateAttendance, deleteAttendance};
