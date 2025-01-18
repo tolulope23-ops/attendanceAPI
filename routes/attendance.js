@@ -6,12 +6,13 @@ const { addStudent, displayStudents, displayStudent, updateStudent, deleteStuden
 const { addClass, displayClasses, displayClass, updateClass, deleteClass } = require('../controller/student_class');
 const { teacherSignUp, displayTeachers, displayTeacher, updateTeacher, deleteTeacher, teacherSignIn } = require('../controller/teacher');
 const { addAttendance, attendanceWeeklyReport, attendanceHistory, deleteAttendance, updateAttendance, displayAttendanceById} = require('../controller/attendance');
+const { validationRules, validate } = require('../utils/validation');
 
 
 //POST REQUEST
 router.post('/student/add', addStudent);
-router.post('/teacher/signUp', teacherSignUp);
-router.post('/teacher/signIn', teacherSignIn);
+router.post('/teacher/signUp',validationRules(), validate, teacherSignUp);
+router.post('/teacher/signIn',validationRules(), validate, teacherSignIn);
 router.post('/class/add', addClass);
 router.post('/attendance/add', isUserAuthenticated,addAttendance);
 

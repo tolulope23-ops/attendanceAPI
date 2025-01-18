@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const Teacher = require('../model/teacher');
 
-const teacherSignUp = async(req, res) => {
+const teacherSignUp = async(req, res, next) => {
     const {fullname, email, password, confirmPassword, phone} = req.body;
    try {
         const emailAlreadyExist = await Teacher.findOne({email});
@@ -33,12 +33,7 @@ const teacherSignUp = async(req, res) => {
             } 
         });
    } catch (error) {
-    console.log(error);
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status:StatusCodes.BAD_REQUEST,
-            message:`Error creating teacher's infomation: ${error.message}`,
-            data:{} 
-        });
+        next(error);
    }
 }
 

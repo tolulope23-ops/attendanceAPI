@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const Attendance = require('../model/attendance');
 
-const addAttendance = async(req, res) => {
+const addAttendance = async(req, res, next) => {
    try {
         const attendant = new Attendance(req.body);
         await attendant.save();
@@ -11,15 +11,11 @@ const addAttendance = async(req, res) => {
             data:attendant
         });
    } catch (error) {
-     res.status(StatusCodes.BAD_REQUEST).json({
-            status:StatusCodes.BAD_REQUEST,
-            message:`Error marking attendance:${error.message}`,
-            data:{} 
-        });
+     next(error);
    }
 }
 
-const displayAttendanceById = async(req, res) => {
+const displayAttendanceById = async(req, res, next) => {
     const { id } = req.params;
     try {
         const attendant = await Attendance.findById({_id:id}).populate('student_Id');
@@ -36,12 +32,7 @@ const displayAttendanceById = async(req, res) => {
             data:attendant
         })
     } catch (error) {
-        console.log("yead",error);
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error finding student's attendance! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 
@@ -57,7 +48,7 @@ const attendanceHistory = async (req, res, next) =>{
         }
         res.status(StatusCodes.OK).json({
             status: StatusCodes.OK,
-            message: "Student attendance: ",
+            message: "Student attendance history: ",
             data:attendants
         })
     } catch (error) {
@@ -89,7 +80,7 @@ const attendanceWeeklyReport = async(req, res, next) => {
     }
 }
 
-const updateAttendance= async(req, res) =>{
+const updateAttendance= async(req, res, next) =>{
     const { id } = req.params;
     try {
         const attendants = await Attendance.findByIdAndUpdate({_id: id},(req.body), {new:true});
@@ -107,12 +98,12 @@ const updateAttendance= async(req, res) =>{
         })
 
     } catch (error) {
-        next();
+        next(error);
     }
 }
 
-const deleteAttendance = async (req, res) =>{
-    const { id } = req.params
+const deleteAttendance = async (req, res, next) =>{
+    const { id } = req.params;
     try {
         const attendant = await Attendance.findByIdAndDelete({_id: id}, {new:true});
         if(!attendant){
@@ -128,11 +119,7 @@ const deleteAttendance = async (req, res) =>{
             data:attendant
         })
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error deleting attendance with the id: ${id}! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 

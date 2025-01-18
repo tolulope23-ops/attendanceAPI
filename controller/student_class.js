@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const Student_class = require('../model/student_class');
 
-const addClass = async(req, res) => {
+const addClass = async(req, res, next) => {
    try {
         const studentClasses = new Student_class(req.body);
         await studentClasses.save();
@@ -11,15 +11,11 @@ const addClass = async(req, res) => {
             data:studentClasses 
         })
    } catch (error) {
-     res.status(StatusCodes.BAD_REQUEST).json({
-            status:StatusCodes.BAD_REQUEST,
-            message:`student's class not created:${error.message}`,
-            data:{} 
-        })
-   }
+        next(error);
+    }
 }
 
-const displayClasses = async (req, res) =>{
+const displayClasses = async (req, res, next) =>{
     try {
         const studentClasses = await Student_class.find();
         if (studentClasses.length === 0){
@@ -35,15 +31,11 @@ const displayClasses = async (req, res) =>{
             data:studentClasses
         })
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error finding student's class! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 
-const displayClass = async(req, res) => {
+const displayClass = async(req, res, next) => {
     const { id } = req.params;
     try {
         const studentClass = await Student_class.findById({_id: id}).populate('teacher_Id');
@@ -56,19 +48,15 @@ const displayClass = async(req, res) => {
         }
         res.status(StatusCodes.OK).json({
             status: StatusCodes.OK,
-            message: "",
+            message: "Student's class",
             data:studentClass
         })
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error finding student's class with the id: ${id}! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 
-const updateClass = async(req, res) =>{
+const updateClass = async(req, res, next) =>{
     const { id } = req.params;
     try {
         const studentClass = await Student_class.findByIdAndUpdate({_id: id},(req.body), {new:true});
@@ -86,15 +74,11 @@ const updateClass = async(req, res) =>{
         })
 
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error updating student's class with the id: ${id}! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 
-const deleteClass = async (req, res) =>{
+const deleteClass = async (req, res, next) =>{
     const { id } = req.params
     try {
         const studentClasses = await Student_class.findByIdAndDelete({_id: id}, {new:true});
@@ -111,12 +95,7 @@ const deleteClass = async (req, res) =>{
             data:studentClasses
         })
     } catch (error) {
-        console.log(error);
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error deleting student's class with the id: ${id}! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 
