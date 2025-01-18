@@ -1,6 +1,7 @@
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
+
 const teacherSchema = mongoose.Schema({
     fullName:{
         type:String,
@@ -21,26 +22,20 @@ const teacherSchema = mongoose.Schema({
     password:{
         type:String,
         required: true
-    },
-
-    confirmPassword:{
-        type:String,
-        required: true
     }
 });
 
-teacherSchema.pre('save', async function(next) {
-    if(!this.isModified(password)) return;
-    const salt = bcrypt.genSalt(10);
+teacherSchema.pre("save", async function (next) {
+    if(!this.isModified("password")) return;
+    const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
-
-})
+});
 
 teacherSchema.methods.comparePassword = async function (password) {
     const isMatch = await bcrypt.compare(password, this.password);
     return isMatch;
-}
+};
 
 teacherSchema.methods.createJWT = async function () {
     const jwt = require('jsonwebtoken');
@@ -53,7 +48,7 @@ teacherSchema.methods.createJWT = async function () {
     },
     JWT_SECRET,
     {
-        expiresIn:'30d'
+        expiresIn:'30days'
     }
 ) 
 }

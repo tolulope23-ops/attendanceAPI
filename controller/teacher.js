@@ -2,20 +2,20 @@ const { StatusCodes } = require('http-status-codes');
 const Teacher = require('../model/teacher');
 
 const teacherSignUp = async(req, res) => {
-    const {fullname, email, password, confirmPassword, phone} = req.body
+    const {fullname, email, password, confirmPassword, phone} = req.body;
    try {
         const emailAlreadyExist = await Teacher.findOne({email});
         if(emailAlreadyExist){
             return res.status(StatusCodes.BAD_REQUEST).json({
                 status:StatusCodes.BAD_REQUEST,
-                message:`Teacher already exist, please login: ${error.message}`,
+                message:`Teacher already exist, please login`,
                 data:{} 
             })
         }
         if(password !== confirmPassword){
             return res.status(StatusCodes.BAD_REQUEST).json({
                 status:StatusCodes.BAD_REQUEST,
-                message:`Incorrect password, please confirmPassword again: ${error.message}`,
+                message:`Incorrect password, please confirmPassword again`,
                 data:{} 
             })
         }
@@ -24,60 +24,69 @@ const teacherSignUp = async(req, res) => {
         res.status(StatusCodes.CREATED).json({
             status:StatusCodes.CREATED,
             message:"Teacher's infomation created.",
-            data:teacher 
+            data:{
+                teacher:{
+                    fullname:teacher.fullName,
+                    email:teacher.email,
+                    password: teacher.password
+                }
+            } 
         });
    } catch (error) {
+    console.log(error);
         res.status(StatusCodes.BAD_REQUEST).json({
             status:StatusCodes.BAD_REQUEST,
             message:`Error creating teacher's infomation: ${error.message}`,
             data:{} 
-        })
+        });
    }
 }
 
-const teacherSignIn = async (req, res) => {
+const teacherSignIn = async (req, res, next) => {
     const {email, password} = req.body;
     try {
-        const emailAlreadyExist = Teacher.findOne({email});
+        const emailAlreadyExist = await Teacher.findOne({email});
         if(!emailAlreadyExist){
             return res.status(StatusCodes.BAD_REQUEST).json({
             status:StatusCodes.BAD_REQUEST,
-            message:`You don't have an account, please signUp: ${error.message}`,
+            message:`You don't have an account, please signUp`,
             data:{} 
         })
     }
-    const ispasswordCorrect = await Teacher.comparePassword(password);
-    if(!ispasswordCorrect){
+    const isPasswordCorrect = await emailAlreadyExist.comparePassword(password);
+    if(!isPasswordCorrect){
         return res.status(StatusCodes.BAD_REQUEST).json({
             status:StatusCodes.BAD_REQUEST,
-            message:`Incorrect password, try again: ${error.message}`,
+            message:`Incorrect password, try again`,
             data:{} 
         })
     }
 
-    const accessToken = await Teacher.createJWT();
+    const accessToken = await emailAlreadyExist.createJWT();
     res.status(StatusCodes.OK).json({
         status:StatusCodes.OK,
         message:"Teacher logged in",
-        data:
-        {
+        data:{
             user:{
-                email,
-                password,
+                id: emailAlreadyExist._id,
+                email: emailAlreadyExist.email,
             },
             accessToken
         }
     });
     } catch (error) {
+        console.log(error);
+        
         res.status(StatusCodes.BAD_REQUEST).json({
             status:StatusCodes.BAD_REQUEST,
             message:`Error logging in: ${error.message}`,
             data:{} 
         })
+        next();
    }
 }
 
-const displayTeachers = async (req, res) =>{
+const displayTeachers = async (req, res, next) =>{
     try {
         const teachers = await Teacher.find();
         if (teachers.length === 0){
@@ -93,15 +102,11 @@ const displayTeachers = async (req, res) =>{
             data:teachers
         })
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error finding teacher!`,
-            data:{}
-        })
+        next();
     }
 }
 
-const displayTeacher = async(req, res) => {
+const displayTeacher = async(req, res, next) => {
     const { id } = req.params;
     try {
         const teacher = await Teacher.findById({_id: id});
@@ -118,15 +123,11 @@ const displayTeacher = async(req, res) => {
             data:teacher
         })
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error finding teacher with the id: ${id}!`,
-            data:{}
-        })
+        next()
     }
 }
 
-const updateTeacher = async(req, res) =>{
+const updateTeacher = async(req, res, next) =>{
     const { id } = req.params;
     try {
         const teacher = await Teacher.findByIdAndUpdate({_id: id},(req.body), {new:true});
@@ -144,15 +145,11 @@ const updateTeacher = async(req, res) =>{
         })
 
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error updating teacher with the id: ${id}!`,
-            data:{}
-        })
+       next();
     }
 }
 
-const deleteTeacher = async (req, res) =>{
+const deleteTeacher = async (req, res, next) =>{
     const { id } = req.params
     try {
         const teacher = await Teacher.findByIdAndDelete({_id: id}, {new:true});
@@ -169,11 +166,7 @@ const deleteTeacher = async (req, res) =>{
             data:teacher
         })
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error deleting teacher with the id: ${id}!`,
-            data:{}
-        })
+        next();
     }
 }
 

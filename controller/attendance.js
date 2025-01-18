@@ -22,8 +22,8 @@ const addAttendance = async(req, res) => {
 const displayAttendanceById = async(req, res) => {
     const { id } = req.params;
     try {
-        const attendants = await Attendance.find({_id: id}).populate('student_Id');
-        if(!attendants){
+        const attendant = await Attendance.findById({_id:id}).populate('student_Id');
+        if(!attendant){
             return res.status(StatusCodes.NOT_FOUND).json({
                 status: StatusCodes.NOT_FOUND,
                 message: `No student's attendance information found!`,
@@ -33,11 +33,10 @@ const displayAttendanceById = async(req, res) => {
         res.status(StatusCodes.OK).json({
             status: StatusCodes.OK,
             message: "Attendance Report: ",
-            data:attendants
+            data:attendant
         })
     } catch (error) {
-        console.log(error);
-        
+        console.log("yead",error);
         res.status(StatusCodes.BAD_REQUEST).json({
             status: StatusCodes.BAD_REQUEST,
             message: `Error finding student's attendance! ${error.message}`,
@@ -46,7 +45,7 @@ const displayAttendanceById = async(req, res) => {
     }
 }
 
-const displayAttendanceHistory = async (req, res) =>{
+const attendanceHistory = async (req, res, next) =>{
     try {
         const attendants = await Attendance.find();
         if (attendants.length === 0){
@@ -62,18 +61,14 @@ const displayAttendanceHistory = async (req, res) =>{
             data:attendants
         })
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error finding student attendance! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 
-const attendanceWeeklyReport = async(req, res) => {
+const attendanceWeeklyReport = async(req, res, next) => {
     const today = new Date();
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(today.getDate() - 7);
+    oneWeekAgo.setDate(today.getDate() - 8);
     try {
         const attendants = await Attendance.find({attendanceDate: {$gte:oneWeekAgo, $lte:today}});
         if(!attendants){
@@ -90,12 +85,7 @@ const attendanceWeeklyReport = async(req, res) => {
         })
     } catch (error) {
         console.log(error);
-        
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error finding student's attendance! ${error.message}`,
-            data:{}
-        })
+        next(error);
     }
 }
 
@@ -117,11 +107,7 @@ const updateAttendance= async(req, res) =>{
         })
 
     } catch (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            status: StatusCodes.BAD_REQUEST,
-            message: `Error updating student's attendance with the id: ${id}! ${error.message}`,
-            data:{}
-        })
+        next();
     }
 }
 
@@ -151,4 +137,4 @@ const deleteAttendance = async (req, res) =>{
 }
 
 
-module.exports = {addAttendance, displayAttendanceById,displayAttendanceHistory, attendanceWeeklyReport, updateAttendance, deleteAttendance};
+module.exports = {addAttendance, displayAttendanceById, attendanceHistory, attendanceWeeklyReport, updateAttendance, deleteAttendance};
