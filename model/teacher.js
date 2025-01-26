@@ -21,7 +21,8 @@ const teacherSchema = mongoose.Schema({
 
     password:{
         type:String,
-        required: true
+        required: true,
+        unique:true
     }
 });
 

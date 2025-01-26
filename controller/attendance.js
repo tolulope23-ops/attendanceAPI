@@ -22,7 +22,7 @@ const displayAttendanceById = async(req, res, next) => {
         if(!attendant){
             return res.status(StatusCodes.NOT_FOUND).json({
                 status: StatusCodes.NOT_FOUND,
-                message: `No student's attendance information found!`,
+                message: "No student's attendance information found!",
                 data:{}
             });
         }
@@ -42,7 +42,7 @@ const attendanceHistory = async (req, res, next) =>{
         if (attendants.length === 0){
             return res.status(StatusCodes.NOT_FOUND).json({
                 status: StatusCodes.NOT_FOUND,
-                message: `No student attendance information found!`,
+                message: "No student attendance information found!",
                 data:{}
             })
         }
@@ -65,7 +65,7 @@ const attendanceWeeklyReport = async(req, res, next) => {
         if(!attendants){
             return res.status(StatusCodes.NOT_FOUND).json({
                 status: StatusCodes.NOT_FOUND,
-                message: `No student's attendance information found!`,
+                message: "No student's attendance information found!",
                 data:{}
             });
         }

@@ -13,12 +13,14 @@ const studentSchema = mongoose.Schema({
 
     email:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
 
     phone:{
         type:String,
         required:true,
+        unique:true
     },
 });
 

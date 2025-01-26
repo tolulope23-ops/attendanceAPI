@@ -7,7 +7,7 @@ const addClass = async(req, res, next) => {
         await studentClasses.save();
         res.status(StatusCodes.CREATED).json({
             status:StatusCodes.CREATED,
-            message:" Student's class created.",
+            message:"student's class created.",
             data:studentClasses 
         })
    } catch (error) {
@@ -21,7 +21,7 @@ const displayClasses = async (req, res, next) =>{
         if (studentClasses.length === 0){
             return res.status(StatusCodes.NOT_FOUND).json({
                 status: StatusCodes.NOT_FOUND,
-                message: `No student's class found!`,
+                message: "No student's class found!",
                 data:{}
             })
         }

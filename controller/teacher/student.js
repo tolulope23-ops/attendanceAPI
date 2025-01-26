@@ -1,8 +1,17 @@
 const { StatusCodes } = require('http-status-codes');
-const Student = require('../model/student');
+const Student = require('../../model/student');
 
 const addStudent = async(req, res, next)=>{
+    const {fullName, email, class_Id, phone} = req.body;
     try {
+        const studentAlreadyExist = await Student.findOne({email});
+        if(studentAlreadyExist){
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status: StatusCodes.BAD_REQUEST,
+                message: "Student already exist",
+                data:{}
+            })
+        }
         const student = new Student(req.body);
         await student.save();
         res.status(StatusCodes.CREATED).json({
@@ -10,7 +19,7 @@ const addStudent = async(req, res, next)=>{
             message:"student information created.",
             data:student 
         })
-    } catch (error) {
+    }catch (error) {
         next(error);
     }
 }
@@ -21,7 +30,7 @@ const displayStudents = async (req, res, next) =>{
         if (students.length === 0){
             return res.status(StatusCodes.NOT_FOUND).json({
                 status: StatusCodes.NOT_FOUND,
-                message: `No student information found!`,
+                message: "No student information found!",
                 data:{}
             })
         }
