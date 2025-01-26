@@ -1,5 +1,5 @@
 const {body, validationResult} = require('express-validator');
-const validationRules = () => {
+const validateSignUp = () => {
     return [
      body("fullName")
        .notEmpty()
@@ -26,6 +26,21 @@ const validationRules = () => {
     ]
 }
 
+const validateSignIn = () => {
+  return [
+   body("email")
+     .notEmpty()
+     .withMessage("Email cannot be empty")
+     .isEmail()
+     .withMessage("please provide a valid email address"),
+
+   body("password")
+     .notEmpty()
+     .withMessage("Password cannot be empty")
+     .isLength({min:5})
+     .withMessage("Password must be at least 6 characters"),
+  ]
+}
 
 const validate = async (req, res, next) => {
     const errors = validationResult(req);
@@ -35,4 +50,7 @@ const validate = async (req, res, next) => {
     next();
 }
 
-module.exports = {validationRules, validate}
+
+
+
+module.exports = {validateSignUp, validateSignIn, validate}

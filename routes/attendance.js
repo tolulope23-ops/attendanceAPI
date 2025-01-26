@@ -4,13 +4,13 @@ const isUserAuthenticated = require('../middleware/isAuthenticated');
 const { addAttendance, attendanceWeeklyReport, attendanceHistory, deleteAttendance, updateAttendance, displayAttendanceById} = require('../controller/attendance');
 
 
-router.post('/attendance/add', isUserAuthenticated, addAttendance);
+router.post('/add', isUserAuthenticated, addAttendance);
 
-router.get('/attendance/:id', isUserAuthenticated, displayAttendanceById);
-router.get('/history/', isUserAuthenticated, attendanceHistory);
-router.get('/weekly', isUserAuthenticated, attendanceWeeklyReport);
+router.get('/:id', isUserAuthenticated, displayAttendanceById);
+router.get('/', isUserAuthenticated, attendanceHistory);
+router.get('/weekly/report', isUserAuthenticated, attendanceWeeklyReport);
 
-router.put('/attendance/update/:id',isUserAuthenticated, updateAttendance);
-router.delete('/attendance/:id',isUserAuthenticated, deleteAttendance);
+router.put('/:id',isUserAuthenticated, updateAttendance);
+router.delete('/:id',isUserAuthenticated, deleteAttendance);
 
 module.exports = router;

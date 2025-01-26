@@ -49,7 +49,7 @@ teacherSchema.methods.createJWT = async function () {
     },
     JWT_SECRET,
     {
-        expiresIn:'30days'
+        expiresIn:'180mins'
     }
 ) 
 }

@@ -34,12 +34,14 @@ const errorHandlerMiddleware = async(err, req, res, next) =>{
         errors.statusCode = StatusCodes.UNAUTHORIZED;
         errors.message = "invalid, refresh token";
       }
+      
       if (err.code && err.code === 11000) {
         errors.message = `sorry, user with this ${Object.keys(
           err.keyValue
         )} already exists, please choose another ${Object.keys(err.keyValue)}`;
         errors.statusCode = StatusCodes.BAD_REQUEST;
       }
+
       if (err.name === "CastError") {
         errors.message = `No item found with id: ${err.value}`;
         errors.statusCode = StatusCodes.NOT_FOUND;

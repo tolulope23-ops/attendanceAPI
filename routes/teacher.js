@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { validationRules, validate } = require('../utils/validation');
+const { validateSignUp, validateSignIn, validate } = require('../utils/validation');
 
 const { teacherSignUp, displayTeachers, displayTeacher, updateTeacher, deleteTeacher, teacherSignIn } = require('../controller/teacher/auth');
 
 
-router.post('/teacher/signUp',validationRules(), validate, teacherSignUp);
-router.post('/teacher/signIn',validationRules(), validate, teacherSignIn);
+router.post('/signUp',validateSignUp(), validate, teacherSignUp);
+router.post('/signIn',validateSignIn(), validate, teacherSignIn);
 
-router.get('/teacher/', displayTeachers),
-router.get('/teacher/:id', displayTeacher);
+router.get('/', displayTeachers),
+router.get('/:id', displayTeacher);
 
-router.put('/teacher/update/:id', updateTeacher);
-router.delete('/teacher/delete/:id', deleteTeacher);
+router.put('/:id', updateTeacher);
+router.delete('/:id', deleteTeacher);
 
 module.exports = router;
